@@ -1,18 +1,20 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9-slim'
-        }
-    }
+    agent any
+    
     stages {
         stage('Build') {
             steps {
-                sh 'pip install -r requirements.txt'
+                // 1. Create a virtual environment named 'venv'
+                sh 'python3 -m venv venv'
+                
+                // 2. Install requirements using the pip inside the venv
+                sh './venv/bin/pip install -r requirements.txt'
             }
         }
         stage('Test') {
             steps {
-                sh 'pytest'
+                // 3. Run pytest using the python binary inside the venv
+                sh './venv/bin/python -m pytest'
             }
         }
     }
