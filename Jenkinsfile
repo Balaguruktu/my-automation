@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.9-slim' // Uses a small container with Python pre-installed
+        }
+    }
     
     stages {
         stage('Build') {
@@ -12,8 +16,6 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 sh 'python3 -m pytest'
-                // If you want to run your python test:
-                // sh 'python3 -m pytest tests/test_demo.py'
             }
         }
         stage('Deploy') {
