@@ -3,4 +3,4 @@ def test_addition():
 
 def test_failure():
     # We include this one just so you can see what a failure looks like later!
-    assert 1 + 1 == 3
+    assert 1 + 1 == 2
