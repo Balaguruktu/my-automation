@@ -1,25 +1,28 @@
 pipeline {
     agent any
-    
     stages {
         stage('Build') {
             steps {
                 sh 'python3 -m venv venv'
                 sh './venv/bin/pip install -r requirements.txt'
+                // Install flake8 for linting
+                sh './venv/bin/pip install flake8'
+            }
+        }
+        stage('Lint') {
+            steps {
+                // This checks your code for errors
+                sh './venv/bin/flake8 tests/ --count --select=E9,F63,F7,F82 --show-source --statistics'
             }
         }
         stage('Test') {
             steps {
-                // We add --junitxml=report.xml so pytest creates the file
                 sh './venv/bin/python -m pytest --junitxml=report.xml'
             }
         }
     }
-    
-    // The post block must be at the pipeline level, outside of stages
     post {
         always {
-            // This reads the file created by the command above
             junit 'report.xml'
         }
     }
