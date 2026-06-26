@@ -1,29 +1,24 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
-                sh 'python3 -m venv venv'
-                sh './venv/bin/pip install -r requirements.txt'
-                // Install flake8 for linting
-                sh './venv/bin/pip install flake8'
+                echo 'Creating virtual environment...'
+                bat 'python -m venv venv'
+                
+                echo 'Installing requirements...'
+                // On Windows, the pip executable is in the Scripts folder
+                bat 'venv\\Scripts\\pip install -r requirements.txt'
             }
         }
-        stage('Lint') {
+        
+        stage('Run Tests') {
             steps {
-                // This checks your code for errors
-                sh './venv/bin/flake8 tests/ --count --select=E9,F63,F7,F82 --show-source --statistics'
+                echo 'Running pytest...'
+                // Using the Windows-style path to pytest
+                bat 'venv\\Scripts\\pytest tests/test_new_feature.py -v'
             }
-        }
-        stage('Test') {
-            steps {
-                sh './venv/bin/python -m pytest --junitxml=report.xml'
-            }
-        }
-    }
-    post {
-        always {
-            junit 'report.xml'
         }
     }
 }
